@@ -7,3 +7,5 @@ brew install bear
 ```
 make fclean ; bear -- make
 ```
+
+https://github.com/rizsotto/Bear
