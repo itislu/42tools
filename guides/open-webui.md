@@ -11,7 +11,7 @@ https://github.com/open-webui/open-webui
 
 I wrote a shell function which starts the Open WebUI container with just one command.
 
-Copy-paste this into your terminal to add the `open-webui` function to your shell.
+Copy-paste this into your terminal to add the `open-webui` function to your shell:
 ```bash
 echo 'function open-webui() {
     local persist_dir="/sgoinfre/goinfre/Perso/$USER/open-webui"
@@ -64,18 +64,18 @@ Open WebUI is then running on `http://localhost:3000`.
 
 ### OpenAI ChatGPT support
 
-Get your OpenAI API key from here: https://platform.openai.com/api-keys
+1. Get your OpenAI API key from here: https://platform.openai.com/api-keys
 
-Add your API key here: `Username > Admin Panel > Settings > Connections > API Key`
+2. Add your API key here: `Username > Admin Panel > Settings > Connections > API Key`
 
-In order for the premium models to show up, you need to add some credit balance to your OpenAI account here: https://platform.openai.com/settings/organization/billing/overview
+3. In order for the premium models to show up, you need to add some credit balance to your OpenAI account here: https://platform.openai.com/settings/organization/billing/overview
 
 ### Anthropic Claude support
 
-Install this function in the WebUI: https://openwebui.com/f/justinrahb/anthropic
+1. Install this function in the WebUI: https://openwebui.com/f/justinrahb/anthropic
 
-Get your Anthropic API key from here: https://console.anthropic.com/settings/keys
+2. Get your Anthropic API key from here: https://console.anthropic.com/settings/keys
 
-Add your API key here: `Workspace > Functions > Anthropic (Settings icon) > Default`
+3. Add your API key here: `Workspace > Functions > Anthropic (Settings icon) > Default`
 
-In order to use any models from Anthropic, you need to add some credit balance to your Anthropic account here: https://console.anthropic.com/settings/plans
+4. In order to use any models from Anthropic, you need to add some credit balance to your Anthropic account here: https://console.anthropic.com/settings/plans
