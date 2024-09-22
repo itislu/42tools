@@ -17,7 +17,7 @@ echo 'function open-webui() {
     local persist_dir="/sgoinfre/goinfre/Perso/$USER/open-webui"
 
     if [ "$1" = "stop" ]; then
-        # Stop the container if it's running
+        # Stop the container if it is running
         if docker ps --filter "name=open-webui" --format "{{.Names}}" | grep -q "^open-webui$"; then
             docker stop open-webui > /dev/null
             echo "open-webui container stopped"
@@ -30,7 +30,7 @@ echo 'function open-webui() {
             mkdir -p "$persist_dir"
             echo "Directory $persist_dir created"
         fi
-        # Start the container if it's not running
+        # Start the container if it is not running
         if docker ps --filter "name=open-webui" --format "{{.Names}}" | grep -q "^open-webui$"; then
             echo "open-webui container already running"
         elif docker ps -a --filter "name=open-webui" --format "{{.Names}}" | grep -q "^open-webui$"; then
