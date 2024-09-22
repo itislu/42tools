@@ -15,14 +15,15 @@ Copy-paste this into your terminal to add the `open-webui` function to your shel
 ```bash
 echo 'function open-webui() {
     local persist_dir="/sgoinfre/goinfre/Perso/$USER/open-webui"
+    local container_name="open-webui"
 
     if [ "$1" = "stop" ]; then
         # Stop the container if it is running
-        if docker ps --filter "name=open-webui" --format "{{.Names}}" | grep -q "^open-webui$"; then
-            docker stop open-webui > /dev/null
-            echo "open-webui container stopped"
+        if docker ps --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
+            docker stop $container_name > /dev/null
+            echo "$container_name container stopped"
         else
-            echo "open-webui container is not running"
+            echo "$container_name container is not running"
         fi
     else
         # Ensure the host directory exists
@@ -31,14 +32,20 @@ echo 'function open-webui() {
             echo "Directory $persist_dir created"
         fi
         # Start the container if it is not running
-        if docker ps --filter "name=open-webui" --format "{{.Names}}" | grep -q "^open-webui$"; then
-            echo "open-webui container already running"
-        elif docker ps -a --filter "name=open-webui" --format "{{.Names}}" | grep -q "^open-webui$"; then
-            docker start open-webui > /dev/null
-            echo "open-webui container started"
+        if docker ps --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
+            port=$(docker port $container_name 8080/tcp | cut -d : -f2)
+            echo "$container_name container already running"
+            echo "Open WebUI is running on http://localhost:$port"
+        elif docker ps -a --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
+            docker start $container_name > /dev/null
+            port=$(docker port $container_name 8080/tcp | cut -d : -f2)
+            echo "$container_name container started"
+            echo "Open WebUI is now running on http://localhost:$port"
         else
-            docker run -d -p 3000:8080 -v "$persist_dir":/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
-            echo "open-webui container created and started"
+            docker run -d -p 3000:8080 -v "$persist_dir":/app/backend/data --name $container_name --restart always ghcr.io/open-webui/open-webui:main > /dev/null
+            port=$(docker port $container_name 8080/tcp | cut -d : -f2)
+            echo "$container_name container created and started"
+            echo "Open WebUI is now running on http://localhost:$port"
         fi
     fi
 }' | tee -a ~/.zshrc ~/.bashrc
