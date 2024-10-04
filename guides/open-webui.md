@@ -70,6 +70,8 @@ Open WebUI is then running on `http://localhost:3000`.
 
 3. In order for the premium models to show up, you need to add some credit balance to your OpenAI account here: https://platform.openai.com/settings/organization/billing/overview
 
+4. Refresh the page
+
 ### Anthropic Claude support
 
 1. Install this function in the WebUI: https://openwebui.com/f/justinrahb/anthropic
@@ -78,4 +80,8 @@ Open WebUI is then running on `http://localhost:3000`.
 
 3. Add your API key here: `Workspace > Functions > Anthropic (settings icon) > Default`
 
-4. In order to use any models from Anthropic, you need to add some credit balance to your Anthropic account here: https://console.anthropic.com/settings/plans
+4. Enable the Anthropic function (toggle on the right)
+
+5. In order to use any models from Anthropic, you need to add some credit balance to your Anthropic account here: https://console.anthropic.com/settings/plans
+
+6. Refresh the page
