@@ -74,7 +74,18 @@ Open WebUI is then running on `http://localhost:3000`.
 
 ### Anthropic Claude support
 
-1. Install this function in the WebUI: https://openwebui.com/f/justinrahb/anthropic
+1. Install the Anthropic function in the WebUI
+
+   - **With Open WebUI account:**<br>
+     https://openwebui.com/f/justinrahb/anthropic
+
+   - **Without Open Webui account:**<br>
+     In order to conveniently install the function you will have to create an account on openwebui.com.<br>
+     I think it is worth it because it gives you access to a marketplace of functions and more to customize the UI and extend its functionality - kind of like extensions for VS Code.<br>
+     If you don't want to do that, you can download the Anthropic function here and import it manually:
+     ```bash
+     curl -LO https://raw.githubusercontent.com/itislu/42tools/refs/heads/main/guides/open-webui/Anthropic-function.json
+     ```
 
 2. Get your Anthropic API key from here and then click on Save: https://console.anthropic.com/settings/keys
 
