@@ -48,7 +48,11 @@ git config --global alias.cml '!f() {
     elif [ -n "$exercise" ]; then
         scope="[$exercise] ";
     fi;
-    git commit -m "$scope$type: $message";
+    if [ -n "$message" ]; then
+        git commit -m "$scope$type: $message";
+    else
+        git commit -m "$scope$type";
+    fi;
 }; f'
 ```
 
