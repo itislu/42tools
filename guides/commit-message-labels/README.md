@@ -13,7 +13,7 @@ It puts the first argument as the type of the commit, everything else as the mes
 This is how you can use the alias:
 
 ```bash
-git cmm feat Convert program arguments to uppercase
+git cml feat Convert program arguments to uppercase
 ```
 
 **Result:**
@@ -24,10 +24,11 @@ git cmm feat Convert program arguments to uppercase
 
 ### Setup
 
-To set this alias up just for your CPP repository (so not globally across all repositories), run the following command:
+To set this alias up globally for your git configuration, run the following command.<br>
+If you prefer to set the alias up just for one repository (so not globally across all repositories), simply remove the `--global` option.
 
 ```bash
-git config alias.cmm '!f() {
+git config --global alias.cml '!f() {
     local exercise_path=$(echo "$GIT_PREFIX" | sed '"'"'s/^..\///'"'"' | grep -oE '"'"'.*(/|^)ex[0-9]{2}(/|$)'"'"');
     local module=$(dirname "$exercise_path" | xargs basename | sed '"'"'s/^\.$//'"'"');
     local exercise=$(basename "$exercise_path");
