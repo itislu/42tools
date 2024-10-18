@@ -11,3 +11,7 @@ Automatic commit message labels for projects separated into modules and/or exerc
 ### [Open WebUI](guides/open-webui)
 
 Save money on your AI subscriptions by using API keys with a custom web interface.
+
+### [Valgrind for Minishell](guides/valgrind-for-minishell)
+
+Run `valms` to start minishell with all valgrind flags, suppression file and no reports from external binaries.
