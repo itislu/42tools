@@ -13,7 +13,9 @@ I wrote a shell function which starts the Open WebUI container with just one com
 
 Copy-paste this into your terminal to add the `open-webui` function to your shell:
 ```bash
-echo 'function open-webui() {
+tee -a ~/.zshrc ~/.bashrc >/dev/null << 'EOF'
+
+function open-webui() {
     local persist_dir="$HOME/open-webui"
     local container_name="open-webui"
 
@@ -60,7 +62,9 @@ echo 'function open-webui() {
             fi
         fi
     fi
-}' | tee -a ~/.zshrc ~/.bashrc >/dev/null
+}
+
+EOF
 exec $SHELL
 ```
 
