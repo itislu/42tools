@@ -60,7 +60,7 @@ echo 'function open-webui() {
             fi
         fi
     fi
-}' | tee -a ~/.zshrc ~/.bashrc
+}' | tee -a ~/.zshrc ~/.bashrc >/dev/null
 exec $SHELL
 ```
 
