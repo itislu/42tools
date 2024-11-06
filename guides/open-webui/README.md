@@ -19,6 +19,30 @@ function open-webui() {
     local persist_dir="$HOME/open-webui"
     local container_name="open-webui"
 
+    function update-open-webui() {
+        echo "Checking for updates..."
+        if docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --run-once open-webui > /dev/null 2>&1; then
+            echo "Update check completed"
+            # Check if container was actually updated by looking at creation time
+            if docker ps -a --filter "name=open-webui" --format "{{.Names}}" | grep -q "^open-webui$"; then
+                local created=$(docker inspect --format '{{.Created}}' open-webui)
+                local current_time=$(date -u +%s)
+                local container_time=$(date -u -d "$created" +%s)
+                local time_diff=$((current_time - container_time))
+
+                if [ $time_diff -lt 60 ]; then  # If container is less than 60 seconds old
+                    echo "Container was updated"
+                    return 2  # Special return code to indicate update occurred
+                fi
+            fi
+            echo "No updates available"
+            return 0
+        else
+            echo "Failed to check for updates"
+            return 1
+        fi
+    }
+
     if [ "$1" = "stop" ]; then
         # Stop the container if it is running
         if docker ps --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
@@ -27,7 +51,28 @@ function open-webui() {
         else
             echo "$container_name container is not running"
         fi
+    elif [ "$1" = "update" ]; then
+        update-open-webui
     else
+        # First, check for updates if the container exists
+        if docker ps -a --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
+            update-open-webui
+            local update_status=$?
+            if [ $update_status -eq 1 ]; then
+                echo "Update check failed, proceeding with existing container"
+            elif [ $update_status -eq 2 ]; then
+                echo "Container was updated, starting it now..."
+                if docker start $container_name > /dev/null; then
+                    port=$(docker port $container_name 8080/tcp | cut -d : -f2)
+                    echo "Open WebUI is now running on http://localhost:$port"
+                    return 0
+                else
+                    echo "Failed to start updated container"
+                    return 1
+                fi
+            fi
+        fi
+
         # Ensure the host directory exists
         if [ ! -d "$persist_dir" ]; then
             if mkdir -p "$persist_dir"; then
@@ -37,7 +82,8 @@ function open-webui() {
                 return 1
             fi
         fi
-        # Start the container if it is not running
+
+        # Start or create the container
         if docker ps --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
             port=$(docker port $container_name 8080/tcp | cut -d : -f2)
             echo "$container_name container already running"
