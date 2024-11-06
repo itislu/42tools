@@ -13,6 +13,10 @@ I wrote a shell function which starts the Open WebUI container with just one com
 
 Copy-paste this into your terminal to add the `open-webui` function to your shell:
 ```bash
+# Remove any existing open-webui function
+sed -i '/^function open-webui()/,/^}/d' ~/.zshrc ~/.bashrc 2>/dev/null || true
+
+# Add the open-webui function
 tee -a ~/.zshrc ~/.bashrc >/dev/null << 'EOF'
 
 function open-webui() {
