@@ -82,7 +82,7 @@ Open WebUI is then running on `http://localhost:3000`.
 
 1. Get your OpenAI API key from here: https://platform.openai.com/api-keys
 
-2. Add your API key here: `Username > Admin Panel > Settings > Connections > API Key > Validate the key (circular arrows icon)`
+2. Add your API key [here](http://localhost:3000/admin/settings): `Connections > API Key > Validate the key (circular arrows icon)`
 
 3. In order for the premium models to show up, you need to add some credit balance to your OpenAI account here: https://platform.openai.com/settings/organization/billing/overview
 
@@ -105,7 +105,7 @@ Open WebUI is then running on `http://localhost:3000`.
 
 2. Get your Anthropic API key from here and then click on Save: https://console.anthropic.com/settings/keys
 
-3. Add your API key here: `Workspace > Functions > Anthropic (settings icon) > Default`
+3. Add your API key [here](http://localhost:3000/workspace/functions): `Anthropic (settings icon) > Default`
 
 4. Enable the Anthropic function (toggle on the right)
 
