@@ -18,29 +18,45 @@ tee -a ~/.zshrc ~/.bashrc >/dev/null << 'EOF'
 function open-webui() {
     local persist_dir="$HOME/open-webui"
     local container_name="open-webui"
+    local image_name="ghcr.io/open-webui/open-webui:main"
 
-    function update-open-webui() {
+    # Nested function to handle updates
+    function update_container() {
         echo "Checking for updates..."
-        if docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock containrrr/watchtower --run-once open-webui > /dev/null 2>&1; then
-            echo "Update check completed"
-            # Check if container was actually updated by looking at creation time
-            if docker ps -a --filter "name=open-webui" --format "{{.Names}}" | grep -q "^open-webui$"; then
-                local created=$(docker inspect --format '{{.Created}}' open-webui)
-                local current_time=$(date -u +%s)
-                local container_time=$(date -u -d "$created" +%s)
-                local time_diff=$((current_time - container_time))
+        # Pull latest image
+        if docker pull $image_name > /dev/null; then
+            # Compare current container image ID with latest image ID
+            local current_image=$(docker inspect --format '{{.Image}}' $container_name)
+            local latest_image=$(docker inspect --format '{{.Id}}' $image_name)
 
-                if [ $time_diff -lt 60 ]; then  # If container is less than 60 seconds old
-                    echo "Container was updated"
-                    return 2  # Special return code to indicate update occurred
+            if [ "$current_image" != "$latest_image" ]; then
+                echo "Update available. Recreating container..."
+                # Stop the current container
+                docker stop $container_name > /dev/null
+                # Remove the old container
+                docker rm $container_name > /dev/null
+                # Create and start new container with the latest image
+                if docker run -d -p 3000:8080 -v "$persist_dir":/app/backend/data --name $container_name --restart always $image_name > /dev/null; then
+                    show_port
+                    return 2  # Indicate update was applied
+                else
+                    echo "Failed to create new container"
+                    return 1
                 fi
+            else
+                echo "Container is already up to date"
+                return 0
             fi
-            echo "No updates available"
-            return 0
         else
             echo "Failed to check for updates"
             return 1
         fi
+    }
+
+    # Nested function to display the running port
+    function show_port() {
+        local port=$(docker port $container_name 8080/tcp | cut -d : -f2)
+        echo "Open WebUI is running on http://localhost:$port"
     }
 
     if [ "$1" = "stop" ]; then
@@ -52,27 +68,12 @@ function open-webui() {
             echo "$container_name container is not running"
         fi
     elif [ "$1" = "update" ]; then
-        update-open-webui
-    else
-        # First, check for updates if the container exists
         if docker ps -a --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
-            update-open-webui
-            local update_status=$?
-            if [ $update_status -eq 1 ]; then
-                echo "Update check failed, proceeding with existing container"
-            elif [ $update_status -eq 2 ]; then
-                echo "Container was updated, starting it now..."
-                if docker start $container_name > /dev/null; then
-                    port=$(docker port $container_name 8080/tcp | cut -d : -f2)
-                    echo "Open WebUI is now running on http://localhost:$port"
-                    return 0
-                else
-                    echo "Failed to start updated container"
-                    return 1
-                fi
-            fi
+            update_container
+        else
+            echo "Container doesn't exist. Run open-webui first to create it."
         fi
-
+    else
         # Ensure the host directory exists
         if [ ! -d "$persist_dir" ]; then
             if mkdir -p "$persist_dir"; then
@@ -85,23 +86,33 @@ function open-webui() {
 
         # Start or create the container
         if docker ps --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
-            port=$(docker port $container_name 8080/tcp | cut -d : -f2)
             echo "$container_name container already running"
-            echo "Open WebUI is running on http://localhost:$port"
+            show_port
         elif docker ps -a --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
+            # Check for updates before starting the existing container
+            update_container
+            local update_status=$?
+
+            if [ $update_status -eq 2 ]; then
+                # Container was already updated and started by update_container
+                return 0
+            elif [ $update_status -eq 1 ]; then
+                echo "Update failed, starting existing container..."
+            fi
+
+            # Start the existing container if no update was applied
             if docker start $container_name > /dev/null; then
-                port=$(docker port $container_name 8080/tcp | cut -d : -f2)
                 echo "$container_name container started"
-                echo "Open WebUI is now running on http://localhost:$port"
+                show_port
             else
                 echo "Failed to start $container_name container"
                 return 1
             fi
         else
-            if docker run -d -p 3000:8080 -v "$persist_dir":/app/backend/data --name $container_name --restart always ghcr.io/open-webui/open-webui:main > /dev/null; then
-                port=$(docker port $container_name 8080/tcp | cut -d : -f2)
+            echo "Creating new container..."
+            if docker run -d -p 3000:8080 -v "$persist_dir":/app/backend/data --name $container_name --restart always $image_name > /dev/null; then
                 echo "$container_name container created and started"
-                echo "Open WebUI is now running on http://localhost:$port"
+                show_port
             else
                 echo "Failed to create and start $container_name container"
                 return 1
