@@ -169,16 +169,9 @@ function open-webui() {
 
 EOF
 
-echo " ✅ open-webui function added to shell configuration files"
-
-# Reload the shell configuration
-current_shell=$(basename "$SHELL")
-echo " 🔄 Reloading shell configuration ($current_shell)..."
-source ~/.${current_shell}rc
-
 # Show initial help message
 echo " ✨ Installation complete!"
-open-webui help
+$SHELL -i -c 'open-webui help'
 
 # Execute a new shell to load the function
 exec $SHELL
