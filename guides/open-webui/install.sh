@@ -11,6 +11,20 @@ function open-webui() {
     local container_name="open-webui"
     local image_name="ghcr.io/open-webui/open-webui:main"
 
+    # Nested function to show help
+    function show_help() {
+        echo "📚 Open WebUI Usage:"
+        echo "   open-webui           - Start or create the container"
+        echo "   open-webui stop      - Stop the container"
+        echo "   open-webui update    - Update the container"
+        echo "   open-webui help      - Show this help message"
+    }
+
+    # Nested function to show help reminder
+    function show_help_reminder() {
+        echo "💡 Tip: Use 'open-webui help' to see all available commands"
+    }
+
     # Nested function to handle updates
     function update_container() {
         echo "🔍 Checking for updates..."
@@ -54,7 +68,10 @@ function open-webui() {
         echo "🌐 Open WebUI is running on http://localhost:$port"
     }
 
-    if [ "$1" = "stop" ]; then
+    if [ "$1" = "help" ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+        show_help
+        return 0
+    elif [ "$1" = "stop" ]; then
         echo "🛑 Attempting to stop container..."
         # Stop the container if it is running
         if docker ps --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
@@ -77,6 +94,7 @@ function open-webui() {
                 echo "✅ Directory $persist_dir created"
             else
                 echo "❌ Failed to create directory $persist_dir"
+                show_help_reminder
                 return 1
             fi
         fi
@@ -92,6 +110,7 @@ function open-webui() {
 
             if [ $update_status -eq 2 ]; then
                 # Container was already updated and started by update_container
+                show_help_reminder
                 return 0
             elif [ $update_status -eq 1 ]; then
                 echo "⚠️ Update failed, starting existing container..."
@@ -103,6 +122,7 @@ function open-webui() {
                 show_port
             else
                 echo "❌ Failed to start $container_name container"
+                show_help_reminder
                 return 1
             fi
         else
@@ -112,10 +132,12 @@ function open-webui() {
                 show_port
             else
                 echo "❌ Failed to create and start $container_name container"
+                show_help_reminder
                 return 1
             fi
         fi
     fi
+    show_help_reminder
 }
 
 EOF
