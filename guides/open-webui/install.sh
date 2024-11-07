@@ -1,8 +1,35 @@
 #!/usr/bin/env bash
 
-# Remove any existing open-webui function
-sed -i '/^function open-webui()/,/^}/d' ~/.zshrc ~/.bashrc 2>/dev/null || true
+echo "🔧 Starting open-webui shell function installation..."
 
+# Check which shells' config files exist
+echo "📋 Checking for shell configuration files..."
+shells_updated=0
+
+if [ -f ~/.zshrc ]; then
+    echo "✓ Found .zshrc"
+    shells_updated=$((shells_updated + 1))
+fi
+
+if [ -f ~/.bashrc ]; then
+    echo "✓ Found .bashrc"
+    shells_updated=$((shells_updated + 1))
+fi
+
+if [ $shells_updated -eq 0 ]; then
+    echo "⚠️ No shell configuration files found (.zshrc or .bashrc)"
+    exit 1
+fi
+
+echo "🗑️ Removing any existing open-webui function..."
+# Remove any existing open-webui function
+if sed -i '/^function open-webui()/,/^}/d' ~/.zshrc ~/.bashrc 2>/dev/null; then
+    echo "✅ Cleaned up existing function definitions"
+else
+    echo "ℹ️ No existing function found, cleanup not needed"
+fi
+
+echo "📝 Adding new open-webui function to shell configuration files..."
 # Add the open-webui function
 tee -a ~/.zshrc ~/.bashrc >/dev/null << 'EOF'
 
@@ -142,5 +169,16 @@ function open-webui() {
 
 EOF
 
-# Execute the new shell to load the function
+echo "✅ open-webui function added to shell configuration files"
+
+# Reload the shell configuration
+current_shell=$(basename "$SHELL")
+echo "🔄 Reloading shell configuration ($current_shell)..."
+source ~/.${current_shell}rc
+
+# Show initial help message
+echo "✨ Installation complete!"
+open-webui help
+
+# Execute a new shell to load the function
 exec $SHELL
