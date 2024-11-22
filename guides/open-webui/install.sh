@@ -55,37 +55,37 @@ function open-webui() {
     # Nested function to handle updates
     function update_container() {
         echo " 🔍 Checking for updates..."
-        echo " 📥 Pulling latest image from repository..."
-        if docker pull $image_name; then
-            echo " ✅ Image pull completed"
-            # Compare current container image ID with latest image ID
-            local current_image=$(docker inspect --format '{{.Image}}' $container_name)
-            local latest_image=$(docker inspect --format '{{.Id}}' $image_name)
-            echo " 📋 Current image: ${current_image:0:12}"
-            echo " 📋 Latest image: ${latest_image:0:12}"
+        # Get latest image digest without pulling
+        local latest_digest=$(docker inspect --format '{{.RepoDigests}}' $image_name | grep -o 'sha256:[a-f0-9]*')
+        # Get image digest of the current container
+        local container_image_id=$(docker inspect --format '{{.Image}}' $container_name)
+        local current_digest=$(docker inspect --format '{{.RepoDigests}}' $container_image_id | grep -o 'sha256:[a-f0-9]*')
+        echo " 📋 Current digest: ${current_digest:0:19}"
+        echo " 📋 Latest digest:  ${latest_digest:0:19}"
 
-            if [ "$current_image" != "$latest_image" ]; then
-                echo " 🆕 New version detected!"
-                echo " 🛑 Stopping current container..."
-                docker stop $container_name > /dev/null
-                echo " 🗑️  Removing old container..."
-                docker rm $container_name > /dev/null
-                echo " 🚀 Creating new container with latest image..."
-                if docker run -d -p 3000:8080 -v "$persist_dir":/app/backend/data --name $container_name --restart always $image_name > /dev/null; then
-                    echo " ✅ Container successfully updated and started"
-                    show_port
-                    return 2  # Indicate update was applied
-                else
-                    echo " ❌ Failed to create new container"
-                    return 1
-                fi
+        if [ "$current_digest" != "$latest_digest" ]; then
+            echo " 🆕 New version detected!"
+            echo " 📥 Pulling latest image..."
+            if ! docker pull $image_name; then
+                echo " ❌ Failed to pull new image"
+                return 1
+            fi
+            echo " 🛑 Stopping current container..."
+            docker stop $container_name > /dev/null
+            echo " 🗑️  Removing old container..."
+            docker rm $container_name > /dev/null
+            echo " 🚀 Creating new container with latest image..."
+            if docker run -d -p 3000:8080 -v "$persist_dir":/app/backend/data --name $container_name --restart always $image_name > /dev/null; then
+                echo " ✅ Container successfully updated and started"
+                show_port
+                return 2  # Indicate update was applied
             else
-                echo " ✅ Container is already running latest version"
-                return 0
+                echo " ❌ Failed to create new container"
+                return 1
             fi
         else
-            echo " ❌ Failed to check for updates"
-            return 1
+            echo " ✅ Container is already running latest version"
+            return 0
         fi
     }
 
