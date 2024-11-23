@@ -55,21 +55,22 @@ function open-webui() {
     # Nested function to handle updates
     function update_container() {
         echo " 🔍 Checking for updates..."
-        # Get latest image digest without pulling
-        local latest_digest=$(docker inspect --format '{{.RepoDigests}}' $image_name | grep -o 'sha256:[a-f0-9]*')
-        # Get image digest of the current container
+        # Get current image digest
         local container_image_id=$(docker inspect --format '{{.Image}}' $container_name)
         local current_digest=$(docker inspect --format '{{.RepoDigests}}' $container_image_id | grep -o 'sha256:[a-f0-9]*')
+        # Pull latest image to get the remote digest
+        echo " 📥 Checking remote registry..."
+        if ! docker pull $image_name; then
+            echo " ❌ Failed to check for updates"
+            return 1
+        fi
+        # Get latest image digest after pulling
+        local latest_digest=$(docker inspect --format '{{.RepoDigests}}' $image_name | grep -o 'sha256:[a-f0-9]*')
         echo " 📋 Current digest: ${current_digest:0:19}"
         echo " 📋 Latest digest:  ${latest_digest:0:19}"
 
         if [ "$current_digest" != "$latest_digest" ]; then
             echo " 🆕 New version detected!"
-            echo " 📥 Pulling latest image..."
-            if ! docker pull $image_name; then
-                echo " ❌ Failed to pull new image"
-                return 1
-            fi
             echo " 🛑 Stopping current container..."
             docker stop $container_name > /dev/null
             echo " 🗑️  Removing old container..."
