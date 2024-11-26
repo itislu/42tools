@@ -19,8 +19,13 @@ bash <(curl -sSL https://raw.githubusercontent.com/itislu/42tools/refs/heads/mai
 ### Usage
 
 ```
-open-webui [stop]
+open-webui [stop|update|help]
 ```
+
+- `open-webui` - Start or create the container
+- `open-webui stop` - Stop the container
+- `open-webui update` - Update the container
+- `open-webui help` - Show help message
 
 Open WebUI is then running on `http://localhost:3000`.
 
