@@ -66,8 +66,8 @@ function open-webui() {
         fi
         # Get latest image digest after pulling
         local latest_digest=$(docker inspect --format '{{.RepoDigests}}' $image_name | grep -o 'sha256:[a-f0-9]*')
-        echo " 📋 Current digest: ${current_digest:0:19}"
-        echo " 📋 Latest digest:  ${latest_digest:0:19}"
+        echo " 📋 Current digest: ${current_digest:0:19}..."
+        echo " 📋 Latest digest:  ${latest_digest:0:19}..."
 
         if [ "$current_digest" != "$latest_digest" ]; then
             echo " 🆕 New version detected!"
