@@ -1,5 +1,13 @@
 # 42tools
 
+### [42-Docker-DevEnv](https://github.com/LeaYeh/42-Docker-DevEnv)
+
+Have the same environment and tools as on campus on your own machine.
+
+### [42free](https://github.com/itislu/42free)
+
+Free up disk space on campus without losing any data.
+
 ### [Bear](guides/bear)
 
 Speed up workspace parsing of your IDE by generating a compilation database.
