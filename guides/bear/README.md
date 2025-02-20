@@ -1,6 +1,6 @@
 # Bear
 
-Speed up workspace parsing of your IDE by generating a compilation database with Bear.
+Speed up workspace parsing of your IDE by generating a compilation database in one command with `bear`.
 
 ## Prerequisites
 
@@ -19,14 +19,14 @@ You can now install packages using Homebrew.
 
 ## Installation
 
-```
+```bash
 brew install bear
 ```
 
 ## Usage
 
-```
-make fclean ; bear -- make
+```bash
+bear -- make re
 ```
 
 https://github.com/rizsotto/Bear

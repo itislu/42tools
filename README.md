@@ -10,7 +10,7 @@ Free up disk space on campus without losing any data.
 
 ### [Bear](guides/bear)
 
-Speed up workspace parsing of your IDE by generating a compilation database.
+Speed up workspace parsing of your IDE by generating a compilation database in one command.
 
 ### [Commit Message Labels](guides/commit-message-labels)
 
