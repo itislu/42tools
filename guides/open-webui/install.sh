@@ -26,7 +26,7 @@ echo " 🗑️  Removing any existing open-webui function..."
 if sed -i '/^function open-webui()/,/^}/d' ~/.zshrc ~/.bashrc 2>/dev/null; then
     echo " ✅ Cleaned up existing function definitions"
 else
-    echo " ℹ️ No existing function found, cleanup not needed"
+    echo " ℹ️  No existing function found, cleanup not needed"
 fi
 
 echo " 📝 Adding new open-webui function to shell configuration files..."
@@ -106,7 +106,7 @@ function open-webui() {
             docker stop $container_name > /dev/null
             echo " ✅ $container_name container stopped"
         else
-            echo " ℹ️ $container_name container is not running"
+            echo " ℹ️  $container_name container is not running"
         fi
     elif [ "$1" = "update" ]; then
         if docker ps -a --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
@@ -129,7 +129,7 @@ function open-webui() {
 
         # Start or create the container
         if docker ps --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
-            echo " ℹ️ $container_name container already running"
+            echo " ℹ️  $container_name container already running"
             show_port
         elif docker ps -a --filter "name=$container_name" --format "{{.Names}}" | grep -q "^$container_name$"; then
             echo " 📦 Found existing container"
